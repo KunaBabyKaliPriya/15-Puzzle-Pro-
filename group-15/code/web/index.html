@@ -1,0 +1,147 @@
+<!--
+ * index.html
+ * 15 Puzzle Pro - Main HTML Entry Point
+ * Author: Hrithikesh
+ * Date: March 2026
+ * Description: The primary markup for the 15-Puzzle Tech Fair Edition. Contains the UI layout.
+ * Time Complexity (Render): O(T) where T=N^2 for grid setup dynamically via JS.
+-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15 Puzzle Pro - Tech Fair Edition</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="game-container">
+        <!-- Welcome Screen -->
+        <div id="screen-welcome" class="screen">
+            <h1>15 PUZZLE PRO</h1>
+            <p style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary);">Welcome to the ultimate
+                tile-sliding challenge.</p>
+            <div style="text-align: center;">
+                <button id="btn-start-game" class="action-btn primary-btn"
+                    style="padding: 1rem 3rem; font-size: 1.25rem;">Start Game</button>
+            </div>
+        </div>
+
+        <!-- Mode Selection Screen -->
+        <div id="screen-modes" class="screen hidden">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent-color);">SELECT MODE</h2>
+            <div id="mode-selector">
+                <button class="mode-btn active" data-mode="single">Single Player</button>
+                <button class="mode-btn" data-mode="pvp">Player vs Player</button>
+                <button class="mode-btn" data-mode="pvai">Player vs AI</button>
+            </div>
+        </div>
+
+        <!-- Difficulty Selection Screen -->
+        <div id="screen-diff" class="screen hidden">
+            <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent-color);">SELECT DIFFICULTY</h2>
+            <div id="difficulty-selector">
+                <button class="diff-btn" data-size="3">Easy (3x3)</button>
+                <button class="diff-btn active" data-size="4">Medium (4x4)</button>
+                <button class="diff-btn" data-size="5">Hard (5x5)</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="screen-loading" class="screen hidden" style="text-align: center;">
+            <div class="loader"></div>
+            <h2 id="loading-text" style="margin-top: 1rem; color: var(--text-primary);">Loading...</h2>
+        </div>
+
+        <!-- Main Game Screen -->
+        <div id="screen-game" class="screen hidden">
+            <header>
+                <h1>15 PUZZLE PRO</h1>
+            </header>
+
+
+            <main>
+                <!-- Player 1 Board Area -->
+                <div class="player-area" id="player1-area">
+                    <div class="stats-panel">
+                        <div class="stat-box">
+                            <span class="stat-label">Moves</span>
+                            <span class="stat-value" id="p1-moves">0</span>
+                        </div>
+                        <div class="stat-box" id="turn-box">
+                            <span class="stat-label">Turn</span>
+                            <span class="stat-value" id="current-turn">Human</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label">Time</span>
+                            <span class="stat-value" id="global-timer">00:00</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-label" id="p1-score-label">Score</span>
+                            <span class="stat-value" id="p1-score">0</span>
+                        </div>
+                        <div class="stat-box hidden" id="p2-score-box">
+                            <span class="stat-label" id="p2-score-label">AI Score</span>
+                            <span class="stat-value" id="p2-score">0</span>
+                        </div>
+                    </div>
+
+                    <div class="board-wrapper">
+                        <div id="board1" class="game-board"></div>
+                    </div>
+
+                    <div class="controls-panel">
+                        <button id="btn-shuffle-p1" class="action-btn primary-btn">Shuffle & Start</button>
+                        <button id="btn-undo-p1" class="action-btn" disabled>Undo</button>
+                        <button id="btn-ai-hint" class="action-btn help-btn">AI Hint</button>
+
+                        <div id="ai-controls" class="hidden">
+                            <span style="color:var(--text-secondary)">AI Strategy:</span>
+                            <select id="ai-strategy-select">
+                                <option value="greedy">Level 1: Greedy BFS</option>
+                                <option value="dnc" selected>Level 2: Divide & Conquer</option>
+                                <option value="astar">Level 3: A* / DP</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <footer>
+                <div id="message-log">Ready to play! Select mode and difficulty.</div>
+                <div id="scoring-info"
+                    style="margin-top: 15px; font-size: 0.85rem; color: var(--text-secondary); text-align: center;">
+                    <strong>Scoring Rules:</strong>
+                    <br>Good Move (Closer to solve): <span style="color:var(--success-color)">+20 Points</span>.
+                    <br>Bad Move (Further from solve): <span style="color:var(--danger-color)">-10 Points</span>.
+                    <br><strong>Negative Marking:</strong> Each second elapsed: <span
+                        style="color:var(--danger-color)">-2 Points</span>.
+                    <br><em>Winning Bonus:</em> Base Score (depends on difficulty).
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Modals (Victory, etc) -->
+    <div id="victory-modal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <h2 id="victory-title">Puzzle Solved!</h2>
+            <p id="victory-stats">Moves: 0 | Time: 00:00 | Score: 0</p>
+            <button id="btn-play-again" class="action-btn primary-btn">Play Again</button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <!-- Separate out concerns for cleaner code -->
+    <script src="js/utils.js"></script>
+    <script src="js/heuristics.js"></script>
+    <script src="js/ai_greedy.js"></script>
+    <script src="js/ai_dnc.js"></script>
+    <script src="js/ai_astar.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/ui.js"></script>
+</body>
+
+</html>
